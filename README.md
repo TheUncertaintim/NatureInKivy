@@ -12,11 +12,7 @@ Kivy is a open-source Python library that helps programmer to build applications
 The folders in this repository are roughly structured according to the chapters organized in the book. Each file in the folder corresponds to an exercise given in the book. You can check out my answer to the exercise by running the command `python FILENAME.py`, provided you have Kivy installed in your computer. Some mathematical or not visualizable exercises are skipped, since I am focusing more on the visualization part in this project.
 
 ### Documentation
-<<<<<<< HEAD
 More detailed about how I understood the book and the code, along with other spontaneous ideas, are documented in my personal [site](https://www.theuncertaintim.com/NatureWithKivy/Preface/). This project started at the end of July 2019, and I will try to keep my progress updated on a weekly basis.
-=======
-More detailed about how I understood the book and the code, along with other spontaneous ideas, are documented in my personal [site]https://www.theuncertaintim.com/NatureWithKivy/Preface/. This project started at the end of July 2019, and I will try to keep my progress updated on a weekly basis.
->>>>>>> cf1a896eb930e539a46801c1ac911b578e0ec064
 
 ### Contact
 Suggestions or feedback are more than welcome. Feel free to get in touch via sending me an [E-Mail](mailto:yujeng.k@gmail.com).
