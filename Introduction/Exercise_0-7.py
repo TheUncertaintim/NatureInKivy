@@ -1,17 +1,17 @@
 """
-Exercise I.6
-Use a custom probability distribution to vary the size of a step taken by the
-random walker. The step size can be determined by influencing the range of
-values picked. Can you map the probability exponentially — i.e. making the
-likelihood that a value is picked equal to the value squared?
+Exercise I.7
+In the above random walker, the result of the noise function is mapped directly
+to the Walker’s location. Create a random walker where you instead map the
+result of the noise() function to a Walker’s step size.
 """
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Point
+from kivy.graphics import Color, Point, Ellipse
 from kivy.clock import Clock
 
-from random import randint
+from random import randint, random
+from noise import pnoise1
 import numpy as np
 
 
@@ -27,8 +27,12 @@ class Walker(Widget):
             # Walker's initial position
             self.path = Point(points = Window.center)
 
+        # Set a starting point for Perlin noise
+        self.tx = randint(1,10000)
+        self.ty = randint(1,10000)
+
         # Update the its own position every 0.1 second
-        Clock.schedule_interval(self.update, 0.1)
+        Clock.schedule_interval(self.update, .1)
 
     def update(self, *args):
 
@@ -37,28 +41,25 @@ class Walker(Widget):
         last_y = self.path.points[-1]
 
         # Pick a step size according to how far the step is
-        stepsize = self.pickStep()
+        newStepX, newStepY = self.pickStep()
 
         # Generate random steps with different step size
-        new_x = randint(-1,1) * stepsize
-        new_y = randint(-1,1) * stepsize
+        new_x = randint(-1,1) * newStepX
+        new_y = randint(-1,1) * newStepY
 
         # Add the next step based on the previous position
         self.path.add_point(last_x + new_x, last_y + new_y)
 
+        # Update tx and ty for next movement
+        self.tx += .01
+        self.ty += .01
+
     def pickStep(self):
 
-        while True:
-            newStep = randint(1,10)
-            threshold = randint(1,100)
+        newStepX = np.interp(pnoise1(self.tx), [-1,1], [0,10])
+        newStepY = np.interp(pnoise1(self.ty), [-1,1], [0,10])
 
-            # The greater the step the lower the possibility to get chosen.
-            if threshold >= (newStep ** 2):
-                break
-            else:
-                pass
-
-        return newStep
+        return newStepX, newStepY
 
 
 class NatureApp(App):
