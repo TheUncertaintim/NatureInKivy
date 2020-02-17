@@ -1,6 +1,8 @@
 """
-Exercise I.1
-Create a random walker that has a tendency to move down and to the right. 
+Exercise 0.5
+A Gaussian random walk is defined as one in which the step size (how far the
+object moves in a given direction) is generated with a normal distribution.
+Implement this variation of our random walk.
 """
 from kivy.app import App
 from kivy.core.window import Window
@@ -8,7 +10,8 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Point
 from kivy.clock import Clock
 
-from random import randint, choice, random
+from random import randint, gauss
+import numpy as np
 
 
 class Walker(Widget):
@@ -32,9 +35,12 @@ class Walker(Widget):
         last_x = self.path.points[-2]
         last_y = self.path.points[-1]
 
-        # With a tendency (60%) moving down and right
-        new_x = choice([-1]*2 + [0]*2 + [1]*6)
-        new_y = choice([-1]*6 + [0]*2 + [1]*2)
+        # Normal distributed multiplier with mean 3 and std 1
+        stepsize = gauss(3,1)
+
+        # Generate random steps with different step size
+        new_x = randint(-1,1) * stepsize
+        new_y = randint(-1,1) * stepsize
 
         # Add the next step based on the previous position
         self.path.add_point(last_x + new_x, last_y + new_y)

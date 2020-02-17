@@ -1,5 +1,5 @@
 """
-Exercise I.4
+Exercise 0.4
 Consider a simulation of paint splatter drawn as a collection of colored dots.
 Most of the paint clusters around a central location, but some dots do splatter
 out towards the edges.

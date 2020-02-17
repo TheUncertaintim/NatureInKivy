@@ -1,9 +1,6 @@
 """
-Exercise I.6
-Use a custom probability distribution to vary the size of a step taken by the
-random walker. The step size can be determined by influencing the range of
-values picked. Can you map the probability exponentially — i.e. making the
-likelihood that a value is picked equal to the value squared?
+Exercise 0.1
+Create a random walker that has a tendency to move down and to the right.
 """
 from kivy.app import App
 from kivy.core.window import Window
@@ -11,8 +8,7 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Point
 from kivy.clock import Clock
 
-from random import randint
-import numpy as np
+from random import randint, choice, random
 
 
 class Walker(Widget):
@@ -36,29 +32,12 @@ class Walker(Widget):
         last_x = self.path.points[-2]
         last_y = self.path.points[-1]
 
-        # Pick a step size according to how far the step is
-        stepsize = self.pickStep()
-
-        # Generate random steps with different step size
-        new_x = randint(-1,1) * stepsize
-        new_y = randint(-1,1) * stepsize
+        # With a tendency (60%) moving down and right
+        new_x = choice([-1]*2 + [0]*2 + [1]*6)
+        new_y = choice([-1]*6 + [0]*2 + [1]*2)
 
         # Add the next step based on the previous position
         self.path.add_point(last_x + new_x, last_y + new_y)
-
-    def pickStep(self):
-
-        while True:
-            newStep = randint(1,10)
-            threshold = randint(1,100)
-
-            # The bigger the step the greater the possibility to get chosen.
-            if threshold <= (newStep ** 2):
-                break
-            else:
-                pass
-
-        return newStep
 
 
 class NatureApp(App):

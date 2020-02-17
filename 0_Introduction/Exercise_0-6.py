@@ -1,8 +1,9 @@
 """
-Exercise I.5
-A Gaussian random walk is defined as one in which the step size (how far the
-object moves in a given direction) is generated with a normal distribution.
-Implement this variation of our random walk.
+Exercise 0.6
+Use a custom probability distribution to vary the size of a step taken by the
+random walker. The step size can be determined by influencing the range of
+values picked. Can you map the probability exponentially — i.e. making the
+likelihood that a value is picked equal to the value squared?
 """
 from kivy.app import App
 from kivy.core.window import Window
@@ -10,7 +11,7 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Point
 from kivy.clock import Clock
 
-from random import randint, gauss
+from random import randint
 import numpy as np
 
 
@@ -35,8 +36,8 @@ class Walker(Widget):
         last_x = self.path.points[-2]
         last_y = self.path.points[-1]
 
-        # Normal distributed multiplier with mean 3 and std 1
-        stepsize = gauss(3,1)
+        # Pick a step size according to how far the step is
+        stepsize = self.pickStep()
 
         # Generate random steps with different step size
         new_x = randint(-1,1) * stepsize
@@ -44,6 +45,20 @@ class Walker(Widget):
 
         # Add the next step based on the previous position
         self.path.add_point(last_x + new_x, last_y + new_y)
+
+    def pickStep(self):
+
+        while True:
+            newStep = randint(1,10)
+            threshold = randint(1,100)
+
+            # The bigger the step the greater the possibility to get chosen.
+            if threshold <= (newStep ** 2):
+                break
+            else:
+                pass
+
+        return newStep
 
 
 class NatureApp(App):
