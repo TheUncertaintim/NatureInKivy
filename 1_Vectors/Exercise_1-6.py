@@ -26,7 +26,7 @@ class PVector(Vector):
             self[0], self[1] = self.normalize() * val
 
 
-class Car(Widget):
+class Ball(Widget):
 
     vel = PVector(2, 0)
     acc = PVector(0, 0)
@@ -58,22 +58,22 @@ class Car(Widget):
             self.y = Window.height
 
 
-class Highway(Widget):
+class BouncingWorld(Widget):
 
-    car = ObjectProperty()
+    myBall = ObjectProperty()
 
     def update(self, dt):
-        self.car.checkEdge()
-        self.car.move()
+        self.myBall.checkEdge()
+        self.myBall.move()
 
 
-class Exercise_1_6_App(App):
+class BallApp(App):
 
     def build(self):
-        h = Highway()
-        Clock.schedule_interval(h.update, .01)
-        return h
+        w = BouncingWorld()
+        Clock.schedule_interval(w.update, .01)
+        return w
 
 
 if __name__ == "__main__":
-    Exercise_1_6_App().run()
+    BallApp().run()

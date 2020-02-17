@@ -38,7 +38,7 @@ class BouncingWorld(Widget):
         self.myBall.move()
 
 
-class Exercise_1_1_App(App):
+class BallApp(App):
 
     def build(self):
         world = BouncingWorld()
@@ -47,4 +47,4 @@ class Exercise_1_1_App(App):
 
 
 if __name__ == "__main__":
-    Exercise_1_1_App().run()
+    BallApp().run()

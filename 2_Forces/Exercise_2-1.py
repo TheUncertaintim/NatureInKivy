@@ -80,11 +80,11 @@ class BouncingWorld(FloatLayout):
         Clock.schedule_interval(b.update, .01)
 
 
-class Exercise_2_1_App(App):
+class BallApp(App):
 
     def build(self):
         return BouncingWorld()
 
 
 if __name__ == "__main__":
-    Exercise_2_1_App().run()
+    BallApp().run()

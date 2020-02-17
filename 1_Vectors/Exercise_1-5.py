@@ -22,7 +22,7 @@ class PVector(Vector):
             self[0], self[1] = self.normalize() * val
 
 
-class Car(Widget):
+class Ball(Widget):
 
     vel = PVector(2, 0)
     acc = PVector(0, 0)
@@ -47,17 +47,17 @@ class Car(Widget):
             self.y = Window.height
 
 
-class Highway(Widget):
+class BouncingWorld(Widget):
 
-    car = ObjectProperty()
+    myBall = ObjectProperty()
 
     def __init__(self, **kwargs):
-        super(Highway, self).__init__(**kwargs)
+        super(BouncingWorld, self).__init__(**kwargs)
         Window.bind(on_key_down=self._keydown)
 
     def update(self, dt):
-        self.car.checkEdge()
-        self.car.move()
+        self.myBall.checkEdge()
+        self.myBall.move()
 
     def _keydown(self, instance, key, *args):
         '''Keycode ref
@@ -65,21 +65,21 @@ class Highway(Widget):
         '''
         # Key Up
         if key == 273:
-            self.car.acc -= PVector(.01,0)
-            print("Vel", self.car.vel, "Acc", self.car.acc)
+            self.myBall.acc -= PVector(.01,0)
+            print("Vel", self.myBall.vel, "Acc", self.myBall.acc)
         # Key Down
         if key == 274:
-            self.car.acc += PVector(.01,0)
-            print("Vel", self.car.vel, "Acc", self.car.acc)
+            self.myBall.acc += PVector(.01,0)
+            print("Vel", self.myBall.vel, "Acc", self.myBall.acc)
 
 
-class Exercise_1_5_App(App):
+class BallApp(App):
 
     def build(self):
-        h = Highway()
-        Clock.schedule_interval(h.update, .01)
-        return h
+        w = BouncingWorld()
+        Clock.schedule_interval(w.update, .01)
+        return w
 
 
 if __name__ == "__main__":
-    Exercise_1_5_App().run()
+    BallApp().run()

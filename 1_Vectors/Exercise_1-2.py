@@ -39,7 +39,7 @@ class Walker(Widget):
         self.point.add_point(new_pos.x, new_pos.y)
 
 
-class Exercise_1_2_App(App):
+class WalkerApp(App):
 
     def build(self):
         w = Walker()
@@ -50,4 +50,4 @@ class Exercise_1_2_App(App):
 
 
 if __name__ == "__main__":
-    Exercise_1_2_App().run()
+    WalkerApp().run()
