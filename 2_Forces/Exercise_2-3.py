@@ -10,6 +10,8 @@ from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import ListProperty
+
 import numpy as np
 from random import randint
 from noise import pnoise1
@@ -18,25 +20,25 @@ from lib.pvector import PVector
 
 class Ball(Widget):
 
+    color = ListProperty([0,0,0,0])
+    tx = randint(0, 10000)
+
     def __init__(self, size, **kwargs):
         super(Ball, self).__init__(**kwargs)
         self.size = size, size
         self.mass = size / 5
         self.vel = PVector(0, 0)
         self.acc = PVector(0, 0)
-
-        self.tx = randint(0, 10000)
+        self.color = [1,1,1,.7]
 
     def update(self, dt):
-        gravity = PVector(0, .1) * self.mass
-        friction = - self.vel.normalize() * .05
+        gravity = PVector(0, .1)
         wind = PVector(pnoise1(self.tx), 0) * .5
         # The closer to the wall is, the stronger the bouncing force... it is
         # in some way like the farer away from center, the stronger the attracting force.
         rebounce = (PVector(Window.center) - self.pos - self.size) * .005
 
         self.applyForce(gravity)
-        self.applyForce(friction)
         self.applyForce(wind)
         self.applyForce(rebounce)
 
@@ -73,10 +75,10 @@ class Ball(Widget):
         self.acc += acc
 
 
-class BouncingWorld(FloatLayout):
+class Universe(FloatLayout):
 
     def __init__(self, **kwargs):
-        super(BouncingWorld, self).__init__(**kwargs)
+        super(Universe, self).__init__(**kwargs)
         for _ in range(5):
             self.add_child()
 
@@ -89,12 +91,12 @@ class BouncingWorld(FloatLayout):
         Clock.schedule_interval(b.update, .01)
 
 
-class BallApp(App):
+class NatureApp(App):
 
     def build(self):
-        return BouncingWorld()
+        return Universe()
 
 
 
 if __name__ == "__main__":
-    BallApp().run()
+    NatureApp().run()

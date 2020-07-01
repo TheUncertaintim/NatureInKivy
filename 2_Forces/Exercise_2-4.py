@@ -1,8 +1,9 @@
 """
-Instead of objects bouncing off the edge of the wall, create an example in which
-an invisible force pushes back on the objects to keep them in the window.
-Can you weight the force according to how far the object is from an edge
- — i.e., the closer it is, the stronger the force?
+Create pockets of friction in a Processing sketch so that objects only
+experience friction when crossing over those pockets. What if you vary the
+strength (friction coefficient) of each area? What if you make some pockets
+feature the opposite of friction—i.e., when you enter a given pocket you
+actually speed up instead of slowing down?
 """
 
 from kivy.app import App
@@ -10,46 +11,70 @@ from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import ListProperty
+
 import numpy as np
-from random import randint
+from random import random, randint
 from noise import pnoise1
 from lib.pvector import PVector
 
 
+class Pocket(Widget):
+
+    color = ListProperty([0,0,0,0])
+
+    def __init__(self, size, pos, c, coef=1, **kwargs):
+        super(Pocket, self).__init__(**kwargs)
+        self.size = size
+        self.pos = pos
+        self.fric_coef = coef
+
+        if isinstance(c, list):
+            self.color = c
+        elif isinstance(c, str):
+            if c == "r":
+                self.color = [.5, 0, 0, 1]
+            elif c == "g":
+                self.color = [0, .5, 0, 1]
+            elif c == "b":
+                self.color = [0, 0, .5, 1]
+            else:
+                r = random()
+                self.color = [r(), r(), r(), 1]
+
+
 class Ball(Widget):
 
-    def __init__(self, size, **kwargs):
+    g = PVector(0, -.1)
+
+    def __init__(self, size, pockets, **kwargs):
         super(Ball, self).__init__(**kwargs)
+        self.pockets = pockets
         self.size = size, size
         self.mass = size / 5
         self.vel = PVector(0, 0)
         self.acc = PVector(0, 0)
 
-        self.tx = randint(0, 10000)
-
     def update(self, dt):
-        gravity = PVector(0, .1) * self.mass
+        gravity =  self.g * self.mass
         friction = - self.vel.normalize() * .05
-        wind = PVector(pnoise1(self.tx), 0) * .5
-        # The closer to the wall is, the stronger the bouncing force... it is
-        # in some way like the farer away from center, the stronger the attracting force.
-        rebounce = (PVector(Window.center) - self.pos - self.size) * .005
+
+        # Check whether the balls are inside the pockets, and
+        # speed up or down depends on the coef of the pocket
+        collisions = map(self.collide_widget, self.pockets)
+        for i, collision in enumerate(collisions):
+            if collision:
+                friction *= self.pockets[i].fric_coef
 
         self.applyForce(gravity)
         self.applyForce(friction)
-        self.applyForce(wind)
-        self.applyForce(rebounce)
 
         self.checkEdge()
         self.move()
 
-        self.tx += .01
-
-    def move(self):
-        self.vel += self.acc
-        self.vel.limit(10)
-        self.pos = PVector(self.pos) + self.vel
-        self.acc *= 0
+    def applyForce(self, force):
+        acc = force / self.mass
+        self.acc += acc
 
     def checkEdge(self):
         # check horizontal border
@@ -68,33 +93,43 @@ class Ball(Widget):
             self.vel.y *= -1
             self.y = 0
 
-    def applyForce(self, force):
-        acc = force / self.mass
-        self.acc += acc
+    def move(self):
+        self.vel += self.acc
+        self.vel.limit(10)
+        self.pos = PVector(self.pos) + self.vel
+        self.acc *= 0
 
 
-class BouncingWorld(FloatLayout):
+class Universe(FloatLayout):
 
     def __init__(self, **kwargs):
-        super(BouncingWorld, self).__init__(**kwargs)
-        for _ in range(5):
-            self.add_child()
+        super(Universe, self).__init__(**kwargs)
+        # add pockets for speeding-up/down balls
+        p_up = Pocket(size=(Window.width/2, 100), pos=(0,100), c="r", coef=2)
+        p_down = Pocket(size=(Window.width/2, 100), pos=(Window.width/2,100), c="g", coef=-2)
+        self.add_widget(p_up)
+        self.add_widget(p_down)
 
-    def add_child(self):
+        # add balls
+        for _ in range(10):
+            self.add_balls(pockets=[p_up, p_down])
+
+    def add_balls(self, pockets):
         pos_x = randint(0, Window.width)
-        pos_y = randint(0, Window.height)
-        b = Ball(pos=(pos_x, pos_y), size=randint(10, 50))
+        pos_y = 400 # randint(0, Window.height)
 
-        self.add_widget(b)
-        Clock.schedule_interval(b.update, .01)
+        wid = Ball(pos=(pos_x, pos_y), size=20, pockets=pockets)
+
+        self.add_widget(wid)
+        Clock.schedule_interval(wid.update, .01)
 
 
-class BallApp(App):
+class NatureApp(App):
 
     def build(self):
-        return BouncingWorld()
+        return Universe()
 
 
 
 if __name__ == "__main__":
-    BallApp().run()
+    NatureApp().run()

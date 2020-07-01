@@ -9,18 +9,7 @@ from kivy.core.window import Window
 from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty
-
-
-class PVector(Vector):
-
-    def __init__(self, *args, **kwargs):
-        super(PVector, self).__init__(*args, **kwargs)
-
-    def limit(self, val):
-        if self.length() > val:
-            #TODO: Limited value tends to drift over time
-            #Possible solution: Decimal module
-            self[0], self[1] = self.normalize() * val
+from lib.pvector import PVector
 
 
 class Ball(Widget):
